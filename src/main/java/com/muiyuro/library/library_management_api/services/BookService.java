@@ -40,19 +40,7 @@ public class BookService {
 
     }
 
-    //Get or Create Author if not present
-    private Author getOrCreateAuthor(AuthorDTO authorDto) {
-        //If ID is present
-        if(authorDto.getId() != null && authorDto.getId() > 0 ){
-            return authorRepository.findById(authorDto.getId())
-                    .orElseThrow(()-> new EntityNotFoundException("Author not found with ID: " + authorDto.getId()));
-        }
-        //Create new
-        log.info("Creating new author: {}", authorDto.getName());
-        Author newAuthor =  modelMapper.map(authorDto, Author.class);
-        return authorRepository.save(newAuthor);
 
-    }
 
     //Update the Book details
     @Transactional
@@ -127,6 +115,21 @@ public class BookService {
         return bookList.stream()
                 .map(book-> modelMapper.map(book, BookDTO.class))
                 .collect(Collectors.toList());
+
+    }
+
+    //Helper method
+    //Get or Create Author if not present
+    private Author getOrCreateAuthor(AuthorDTO authorDto) {
+        //If ID is present
+        if(authorDto.getId() != null && authorDto.getId() > 0 ){
+            return authorRepository.findById(authorDto.getId())
+                    .orElseThrow(()-> new EntityNotFoundException("Author not found with ID: " + authorDto.getId()));
+        }
+        //Create new
+        log.info("Creating new author: {}", authorDto.getName());
+        Author newAuthor =  modelMapper.map(authorDto, Author.class);
+        return authorRepository.save(newAuthor);
 
     }
 }

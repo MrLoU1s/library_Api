@@ -54,11 +54,12 @@ public class AuthorService {
                 .orElseThrow(()-> new EntityNotFoundException("Author not found with ID: " + authorId));
         return modelMapper.map(author, AuthorDTO.class);
 
+
     }
     
     //Update Author
     @Transactional
-    public AuthorDTO updateAuthorDetails(AuthorDTO authorDTO, Long authorId){
+    public AuthorDTO updateAuthorDetails(Long authorId, AuthorDTO authorDTO){
         log.info("Attempting to update author with ID: {}", authorId);
         Author existingAuthor = authorRepository.findById(authorId)
                 .orElseThrow(()-> new EntityNotFoundException("Author not found with ID: " + authorId));
