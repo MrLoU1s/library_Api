@@ -9,12 +9,14 @@ import com.muiyuro.library.library_management_api.repositories.BookRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class BookService {
@@ -26,12 +28,14 @@ public class BookService {
     //Create Book
     @Transactional
     public  BookDTO createBook(BookDTO bookDTO) {
+        log.info("Attempting to create a new book with title: {}", bookDTO.getTitle());
         Author author = getOrCreateAuthor(bookDTO.getAuthor());
 
         Book newbook = modelMapper.map(bookDTO, Book.class);
         newbook.setAuthor(author);
 
         Book savedBook = bookRepository.save(newbook);
+        log.info("Successfully created book with ID: {}", savedBook.getId());
         return modelMapper.map(savedBook, BookDTO.class);
 
     }
@@ -44,6 +48,7 @@ public class BookService {
                     .orElseThrow(()-> new EntityNotFoundException("Author not found with ID: " + authorDto.getId()));
         }
         //Create new
+        log.info("Creating new author: {}", authorDto.getName());
         Author newAuthor =  modelMapper.map(authorDto, Author.class);
         return authorRepository.save(newAuthor);
 
@@ -52,6 +57,7 @@ public class BookService {
     //Update the Book details
     @Transactional
     public BookDTO updateBook(Long bookId, BookDTO bookDTO) {
+        log.info("Attempting to update book with ID: {}", bookId);
         Book existingBook = bookRepository.findById(bookId)
                 .orElseThrow(()-> new EntityNotFoundException("Book not found with ID: " + bookId));
 
@@ -68,16 +74,20 @@ public class BookService {
         }
 
         Book updatedBook = bookRepository.save(existingBook);
+        log.info("Successfully updated book with ID: {}", updatedBook.getId());
         return modelMapper.map(updatedBook, BookDTO.class);
     }
 
     //Delete Book by ID
     @Transactional
     public void deleteBook(Long bookId){
+        log.info("Attempting to delete book with ID: {}", bookId);
         if(!bookRepository.existsById(bookId)){
+            log.error("Failed to delete. Book not found with ID: {}", bookId);
             throw new EntityNotFoundException("Book not found with ID: " + bookId);
         }
         bookRepository.deleteById(bookId);
+        log.info("Successfully deleted book with ID: {}", bookId);
     }
 
     //Get Book by ID
