@@ -120,7 +120,7 @@ public class BookService {
 
     //Helper method
     //Get or Create Author if not present
-    private Author getOrCreateAuthor(AuthorDTO authorDto) {
+    Author getOrCreateAuthor(AuthorDTO authorDto) {
         //If ID is present
         if(authorDto.getId() != null && authorDto.getId() > 0 ){
             return authorRepository.findById(authorDto.getId())
