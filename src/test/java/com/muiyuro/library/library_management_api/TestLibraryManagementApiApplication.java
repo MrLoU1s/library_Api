@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 public class TestLibraryManagementApiApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.from(LibraryManagementApiApplication::main).with(TestcontainersConfiguration.class).run(args);
+		SpringApplication.from(LibraryManagementApiApplication::main).with(TestContainersConfiguration.class).run(args);
 	}
 
 }
