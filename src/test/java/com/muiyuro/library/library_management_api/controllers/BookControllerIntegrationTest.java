@@ -16,6 +16,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import static org.hamcrest.Matchers.containsString;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import({TestContainersConfiguration.class, TestSecurityConfig.class})
 @AutoConfigureWebTestClient(timeout = "10000")
@@ -149,6 +151,26 @@ class BookControllerIntegrationTest {
                 .jsonPath("$.yearPublished").isEqualTo(savedBook.getYearPublished());
     }
 
+    @Test
+    void getBookById_notFound_returns404() {
+        webTestClient.get()
+                .uri("/api/books/9999")
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("$.error").value(containsString("not found"));
+    }
+
+    @Test
+    void createBook_withBlankTitle_returns400() {
+        bookDTO.setTitle(""); // Invalid title
+
+        webTestClient.post()
+                .uri("/api/books")
+                .bodyValue(bookDTO)
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
 
     @Test
     void testGetAllBooks(){
@@ -211,6 +233,19 @@ class BookControllerIntegrationTest {
                 .jsonPath("$[0].title").isEqualTo(savedBook.getTitle())
                 .jsonPath("$[0].isbn").isEqualTo(savedBook.getIsbn())
                 .jsonPath("$[0].yearPublished").isEqualTo(savedBook.getYearPublished());
+    }
+
+    @Test
+    void testGetBooksPublishedAfter_EmptyResult() {
+        webTestClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/books/search/year")
+                        .queryParam("year", 2025)
+                        .build())
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$").isEmpty();
     }
 
 }
