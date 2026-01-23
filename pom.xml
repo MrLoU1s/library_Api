@@ -29,6 +29,8 @@
 	<properties>
 		<java.version>17</java.version>
 		<lombok.version>1.18.36</lombok.version>
+        <mockito.version>5.11.0</mockito.version>
+        <byte-buddy.version>1.14.12</byte-buddy.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -120,6 +122,33 @@
             <artifactId>spring-boot-starter-webflux</artifactId>
             <scope>test</scope>
         </dependency>
+        
+        <!-- Explicitly upgrade Byte Buddy for Java 23 support -->
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>${byte-buddy.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy-agent</artifactId>
+            <version>${byte-buddy.version}</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <!-- Explicitly upgrade Mockito -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
 
 	</dependencies>
 
@@ -171,6 +200,19 @@
 					</excludes>
 				</configuration>
 			</plugin>
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>
+                        @{argLine}
+                        -XX:+EnableDynamicAgentLoading
+                        -Xshare:off
+                        -Dnet.bytebuddy.experimental=true
+                    </argLine>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 

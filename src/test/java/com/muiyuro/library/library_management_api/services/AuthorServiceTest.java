@@ -49,8 +49,8 @@ class AuthorServiceTest {
         
         testAuthor = new Author();
         testAuthor.setId(1L); 
-        testAuthor.setName("Cool");
-        testAuthor.setBio("Cool");
+        testAuthor.setName("Cool Author");
+        testAuthor.setBio("Cool Bio");
         
         testBook.setAuthor(testAuthor);
         testAuthor.setBooks(new ArrayList<>(List.of(testBook)));
@@ -79,13 +79,13 @@ class AuthorServiceTest {
     void createAuthor() {
         //assign
         AuthorDTO newAuthor = new AuthorDTO();
-        newAuthor.setName("Cool Guy");
-        newAuthor.setBio("Cool");
+        newAuthor.setName("New Author");
+        newAuthor.setBio("New Bio");
 
         Author savedAuthor = new Author();
         savedAuthor.setId(2L);
-        savedAuthor.setName("Cool Guy");
-        savedAuthor.setBio("Cool");
+        savedAuthor.setName("New Author");
+        savedAuthor.setBio("New Bio");
 
         when(authorRepository.save(any(Author.class))).thenReturn(savedAuthor);
         
@@ -113,7 +113,7 @@ class AuthorServiceTest {
 
         //Assert
         assertThat(authorDTO).isNotEmpty();
-        assertThat(authorDTO.get(0).getName()).isEqualTo("Cool");
+        assertThat(authorDTO.get(0).getName()).isEqualTo("Cool Author");
 
         //verify
         verify(authorRepository).findAuthorByNameContainingIgnoreCase("Cool");
@@ -131,7 +131,7 @@ class AuthorServiceTest {
 
         //Assert
         assertNotNull(authorDTO);
-        assertThat(authorDTO.getName()).isEqualTo("Cool");
+        assertThat(authorDTO.getName()).isEqualTo("Cool Author");
 
         //verify
         verify(authorRepository).findById(1L);
