@@ -1,6 +1,7 @@
 package com.muiyuro.library.library_management_api.controllers;
 
 import com.muiyuro.library.library_management_api.TestContainersConfiguration;
+import com.muiyuro.library.library_management_api.TestSecurityConfig;
 import com.muiyuro.library.library_management_api.dtos.AuthorDTO;
 import com.muiyuro.library.library_management_api.dtos.BookDTO;
 import com.muiyuro.library.library_management_api.entities.Author;
@@ -12,16 +13,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Import(TestContainersConfiguration.class)
+@Import({TestContainersConfiguration.class, TestSecurityConfig.class})
 @AutoConfigureWebTestClient(timeout = "10000")
 class BookControllerIntegrationTest {
 
@@ -41,17 +37,6 @@ class BookControllerIntegrationTest {
     private Author authorTest;
 
     private AuthorDTO authorDTO;
-
-    @TestConfiguration
-    static class TestSecurityConfig {
-        @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-            http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
-            return http.build();
-        }
-    }
 
     @BeforeEach
     void setUp() {
